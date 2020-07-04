@@ -144,30 +144,42 @@
 
 </head>
 
-<body style="font-family: monospace;">
+<body data-gr-c-s-loaded="true" style="font-family: monospace;">
 
-  <center>
+  <div id='container'>
+      <div id="vid_container">
+        <video id="video" autoplay playsinline></video>
+        <div id="video_overlay"></div>
+      </div>
+    <div id="gui_controls">
+        
+      <button id="switchCameraButton" name="switch Camera" type="button" aria-pressed="true"></button>
+      <button id="takePhotoButton" name="take Photo" type="button"></button>
+      <button id="toggleFullScreenButton" name="toggle FullScreen" type="button" aria-pressed="false" style="display: block;"></button>
+    </div>
+  </div>
+
+    <script src="mobile.js"></script>
+
+  <!-- <center>
     <div style="margin: 10px;"><strong>-= Augmented Reality Marker Detector =-</strong></div>
 
-   <!--  <img id="apple1" width="220" height="220" src="apple1.png" alt="apple before">
-    <img id="apple2" width="220" height="220" src="apple2.png" alt="apple after">
- -->
 
-    <canvas id="canvas" width="320px" height="240px" style="display: none;"></canvas>
-    <div id="basic" style="text-align:center;">
+    <canvas id="canvas" width="320px" height="240px" style="display: none;"></canvas> -->
+    <!-- <div id="basic" style="text-align:center;">
       <video width="400px" height = "300px" class="videostream"autoplay></video>
       <p>
         <button class="capture-button">Capture video</button>
         <button id="stop-button">Stop</button>
       </p>
-    </div>
-    <script>
+    </div> -->
+    <!-- <script>
       function handleError(error) {
       console.error('navigator.getUserMedia error: ', error);
-    }
-    const constraints = {video: true};
+      }
+      const constraints = {video: true};
 
-    (function() {
+      (function() {
       const video = document.querySelector('#basic video');
       const captureVideoButton = document.querySelector('#basic .capture-button');
       let localMediaStream;
@@ -186,10 +198,10 @@
         video.pause();
         localMediaStream.stop();
       };
-    })();
+      })();
 
-    </script>
-    
+    </script> -->
+
 
     <!-- <object id="flash"
             width="320" height="240"
@@ -206,7 +218,7 @@
              type="application/x-shockwave-flash"
              pluginspage="http://www.macromedia.com/go/getflashplayer"/>
     </object> -->
-  </center>
+  <!-- </center> -->
 
 </body>
   
