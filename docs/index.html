@@ -5,22 +5,24 @@
 
   <script type="text/javascript" src="cv.js"></script> 
   <script type="text/javascript" src="aruco.js"></script> 
+  <script src="mobile.js"></script> 
 
   <script>
     var camera, canvas, context, imageData, pixels, detector;
 
     function cameraUnmuted(){
-      camera = document.getElementById("flashcam");
+      // camera = document.getElementById("flashcam");
       canvas = document.getElementById("canvas");
       context = canvas.getContext("2d");
-      imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      context.drawImage (video,0,0);
+      // imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       pixels = [];
       detector = new AR.Detector();
 
       camera.style.visibility = "hidden";
       canvas.style.display = "block";
 
-      setTimeout(tick, 1);
+      // setTimeout(tick, 1);
     }
 
     function tick(){
@@ -128,11 +130,9 @@
           img1.onload = function(){
           context.drawImage(img1, x, y)
           }
-          // img = document.getElementById("apple1");
           
         }
         if (id == 1001 ){
-          // img = document.getElementById("apple2");
           img2.onload = function(){
           context.drawImage(img2, x, y)}
         }
@@ -154,7 +154,14 @@
  -->
 
     <canvas id="canvas" width="320px" height="240px" style="display: none;"></canvas>
-    <object id="flash"
+    <video class="videostream"autoplay></video>
+    <p>
+      <button class="capture-button">Capture video</button>
+      <button id="stop-button">Stop</button>
+    </p>
+    
+
+    <!-- <object id="flash"
             width="320" height="240"
             classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
             codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0">
@@ -168,7 +175,7 @@
              allowScriptAccess="always" 
              type="application/x-shockwave-flash"
              pluginspage="http://www.macromedia.com/go/getflashplayer"/>
-    </object>
+    </object> -->
   </center>
 
 </body>
