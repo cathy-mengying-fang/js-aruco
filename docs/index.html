@@ -5,16 +5,46 @@
 
   <script type="text/javascript" src="cv.js"></script> 
   <script type="text/javascript" src="aruco.js"></script> 
-  <script src="mobile.js"></script> 
+  <!-- <script src="mobile.js"></script>  -->
 
   <script>
+
+    function handleError(error) {
+      console.error('navigator.getUserMedia error: ', error);
+    }
+    const constraints = {video: true};
+
+    (function() {
+      const video = document.querySelector('#basic video');
+      const captureVideoButton = document.querySelector('#basic .capture-button');
+      let localMediaStream;
+
+      function handleSuccess(stream) {
+        localMediaStream = stream;
+        video.srcObject = stream;
+      }
+
+      captureVideoButton.onclick = function() {
+        navigator.mediaDevices.getUserMedia(constraints).
+          then(handleSuccess).catch(handleError);
+      };
+
+      document.querySelector('#stop-button').onclick = function() {
+        video.pause();
+        localMediaStream.stop();
+      };
+    })();
+
+
+
+    
     var camera, canvas, context, imageData, pixels, detector;
 
     function cameraUnmuted(){
       // camera = document.getElementById("flashcam");
       canvas = document.getElementById("canvas");
       context = canvas.getContext("2d");
-      context.drawImage (video,0,0);
+      // context.drawImage (video,0,0);
       // imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       pixels = [];
       detector = new AR.Detector();
@@ -154,11 +184,13 @@
  -->
 
     <canvas id="canvas" width="320px" height="240px" style="display: none;"></canvas>
-    <video class="videostream"autoplay></video>
-    <p>
-      <button class="capture-button">Capture video</button>
-      <button id="stop-button">Stop</button>
-    </p>
+    <div id="basic" style="text-align:center;"
+      <video class="videostream"autoplay></video>
+      <p>
+        <button class="capture-button">Capture video</button>
+        <button id="stop-button">Stop</button>
+      </p>
+    </div>
     
 
     <!-- <object id="flash"
