@@ -8,36 +8,6 @@
   <!-- <script src="mobile.js"></script>  -->
 
   <script>
-
-    function handleError(error) {
-      console.error('navigator.getUserMedia error: ', error);
-    }
-    const constraints = {video: true};
-
-    (function() {
-      const video = document.querySelector('#basic video');
-      const captureVideoButton = document.querySelector('#basic .capture-button');
-      let localMediaStream;
-
-      function handleSuccess(stream) {
-        localMediaStream = stream;
-        video.srcObject = stream;
-      }
-
-      captureVideoButton.onclick = function() {
-        navigator.mediaDevices.getUserMedia(constraints).
-          then(handleSuccess).catch(handleError);
-      };
-
-      document.querySelector('#stop-button').onclick = function() {
-        video.pause();
-        localMediaStream.stop();
-      };
-    })();
-
-
-
-    
     var camera, canvas, context, imageData, pixels, detector;
 
     function cameraUnmuted(){
@@ -184,13 +154,41 @@
  -->
 
     <canvas id="canvas" width="320px" height="240px" style="display: none;"></canvas>
-    <div id="basic" style="text-align:center;"
-      <video class="videostream"autoplay></video>
+    <div id="basic" style="text-align:center;">
+      <video width="400px" height = "300px" class="videostream"autoplay></video>
       <p>
         <button class="capture-button">Capture video</button>
         <button id="stop-button">Stop</button>
       </p>
     </div>
+    <script>
+      function handleError(error) {
+      console.error('navigator.getUserMedia error: ', error);
+    }
+    const constraints = {video: true};
+
+    (function() {
+      const video = document.querySelector('#basic video');
+      const captureVideoButton = document.querySelector('#basic .capture-button');
+      let localMediaStream;
+
+      function handleSuccess(stream) {
+        localMediaStream = stream;
+        video.srcObject = stream;
+      }
+
+      captureVideoButton.onclick = function() {
+        navigator.mediaDevices.getUserMedia(constraints).
+          then(handleSuccess).catch(handleError);
+      };
+
+      document.querySelector('#stop-button').onclick = function() {
+        video.pause();
+        localMediaStream.stop();
+      };
+    })();
+
+    </script>
     
 
     <!-- <object id="flash"
