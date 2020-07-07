@@ -3,77 +3,96 @@
 <head>
   <title>Augmented Reality Marker Detector</title>
 
-  <script type="text/javascript" src="libs/polyfill.js"></script> 
-  
   <script type="text/javascript" src="cv.js"></script> 
-  <script type="text/javascript" src="aruco.js"></script> 
+  <script type="text/javascript" src="aruco.js"></script>
+      <script src="mobile.js"></script> 
+   <script>
+    
 
-  <script>
-    var video, canvas, context, imageData, detector;
-  
-    function onLoad(){
-      video = document.getElementById("video");
+    document.addEventListener('DOMContentLoaded',
+    function(){
+      var camera, canvas, context, imageData, pixels;
+      console.log('camera unmuted');
+      camera = document.getElementById("video");
       canvas = document.getElementById("canvas");
       context = canvas.getContext("2d");
-    
-      canvas.width = parseInt(canvas.style.width);
-      canvas.height = parseInt(canvas.style.height);
+      var back = document.createElement('canvas');
+      var backcontext = back.getContext('2d');
       
-      if (navigator.mediaDevices === undefined) {
-        navigator.mediaDevices = {};
-      }
+      var cw = camera.clientWidth;
+      var ch = canvas.clientHeight;
+
+      canvas.width = cw;
+      canvas.height = ch;
+
+      back.width = cw;
+      back.height = ch;
+
+     
+      draw(camera,context,backcontext,cw,ch);
+
+      // camera.style.visibility = "hidden";
+      // canvas.style.display = "block";
+
+      // setTimeout(tick, 1);
       
-      if (navigator.mediaDevices.getUserMedia === undefined) {
-        navigator.mediaDevices.getUserMedia = function(constraints) {
-          var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    },false);
+
+    function draw(camera,context,backcontext,cw,ch){
+
+      backcontext.drawImage(camera,0, 0, cw, ch);
+      imageData = context.getImageData(0, 0, cw, ch);
+      console.log(imageData);
+      pixels = [];
+      
+
+
+      var detector = new AR.Detector();
+      var markers = detector.detect(imageData);
+      drawCorners(markers,backcontext);
+      drawId(markers,backcontext);
+      drawObject(markers,backcontext);
+
+      context.putImageData(imageData, 0, 0);
+
+
+
+      setTimeout(draw(camera,context,backcontext,cw,ch),1);
+
+    }
+
+    // function tick(){
+    //   snapshot();
+
+    //   var markers = detector.detect(imageData);
+    //   drawCorners(markers);
+    //   drawId(markers);
+    //   drawObject(markers);
+
+    //   setTimeout(tick, 1);
+    // }
+
+    // function snapshot(){
+    //   // var image = imageData.data,
+    //   //     i = 0, j = 0, curr = 0, len;
+
+    //   // pixels = camera.snapshot().split(",");
+
+    //   // len = pixels.length - 1;
+    //   // while(len --){
+    //   //   curr += parseInt( pixels[j ++], 36);
+
+    //   //   image[i ++] = curr >> 16;
+    //   //   image[i ++] = (curr >> 8) & 0xff;
+    //   //   image[i ++] = curr & 0xff;
+    //   //   image[i ++] = 255;
+    //   // }
+
+    //   context.putImageData(imageData, 0, 0);
+    // }
           
-          if (!getUserMedia) {
-            return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-          }
-
-          return new Promise(function(resolve, reject) {
-            getUserMedia.call(navigator, constraints, resolve, reject);
-          });
-        }
-      }
-      
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then(function(stream) {
-          if ("srcObject" in video) {
-            video.srcObject = stream;
-          } else {
-            video.src = window.URL.createObjectURL(stream);
-          }
-        })
-        .catch(function(err) {
-          console.log(err.name + ": " + err.message);
-        }
-      );
-        
-      detector = new AR.Detector();
-
-      requestAnimationFrame(tick);
-    }
-    
-    function tick(){
-      requestAnimationFrame(tick);
-      
-      if (video.readyState === video.HAVE_ENOUGH_DATA){
-        snapshot();
-
-        var markers = detector.detect(imageData);
-        drawCorners(markers);
-        drawId(markers);
-      }
-    }
-
-    function snapshot(){
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    }
-          
-    function drawCorners(markers){
+    function drawCorners(markers,context){
+      // console.log("drawing corners");
       var corners, corner, i, j;
     
       context.lineWidth = 3;
@@ -99,7 +118,7 @@
       }
     }
 
-    function drawId(markers){
+    function drawId(markers,context){
       var corners, corner, x, y, i, j;
       
       context.strokeStyle = "blue";
@@ -122,19 +141,91 @@
       }
     }
 
-    window.onload = onLoad;
-  </script>
+    function drawObject(markers,context) {
+      var corners, corner, x, y, i, j,id,img1,img2;
+      
+      img1 = new Image();
+      img2 = new Image();
+      img1.src = 'apple1.png';
+      img2.src = 'apple2.png';
+      
+      for (i = 0; i !== markers.length; ++ i){
+        corners = markers[i].corners;
+        
+        x = Infinity;
+        y = Infinity;
+        
+        for (j = 0; j !== corners.length; ++ j){
+          corner = corners[j];
+          
+          x = Math.min(x, corner.x);
+          y = Math.min(y, corner.y);
+        }
 
+        id = markers[i].id;
+        if (id == 981){
+          img1.onload = function(){
+          context.drawImage(img1, x, y)
+          }
+          
+        }
+        if (id == 1001 ){
+          img2.onload = function(){
+          context.drawImage(img2, x, y)}
+        }
+      }
+
+    }
+
+ </script>
+
+  
 </head>
 
-<body style="font-family: monospace;">
-
-  <center>
+<body data-gr-c-s-loaded="true" style="font-family: monospace;">
+  
     <div style="margin: 10px;"><strong>-= Augmented Reality Marker Detector =-</strong></div>
-    <video id="video" autoplay="true" style="display:none;"></video>
-    <canvas id="canvas" style="width:640px; height:480px;"></canvas>
-    <div style="margin: 15px;"><strong>Powered by <a href="http://code.google.com/p/js-aruco/">js-aruco</a></strong></div>
-  </center>
+    <video id="video" autoplay playsinline></video>
+    <!-- <video id="video"></video> -->
+    <canvas id="canvas" ></canvas>
+
+    <style>
+       
+      #canvas {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -180px 0 0 20px;
+      }
+       
+      #video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -180px 0 0 -500px;
+      }
+    </style>
+
+
+
+
+    <!-- <div id='container'> -->
+      <!-- <div id='vid_container'> -->
+        
+          
+          <!-- <div id="video_overlay"></div> -->
+      <!-- </div> -->
+      <!-- <div id="gui_controls">
+          
+        <button id="switchCameraButton" name="switch Camera" type="button" aria-pressed="true"></button>
+        <button id="takePhotoButton" name="take Photo" type="button"></button>
+        <button id="toggleFullScreenButton" name="toggle FullScreen" type="button" aria-pressed="false" style="display: block;"></button>
+      </div> -->
+    <!-- </div> -->
+    
+
+
+   
 
 </body>
   
