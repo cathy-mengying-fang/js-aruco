@@ -44,6 +44,7 @@ AR.Detector = function(){
 };
 
 AR.Detector.prototype.detect = function(image){
+  // console.log('etecting image');
   CV.grayscale(image, this.grey);
   CV.adaptiveThreshold(this.grey, this.thres, 2, 7);
   
