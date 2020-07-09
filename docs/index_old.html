@@ -1,0 +1,201 @@
+<html>
+
+<head>
+  <title>Augmented Reality Marker Detector</title>
+
+  <script type="text/javascript" src="cv.js"></script> 
+  <script type="text/javascript" src="aruco.js"></script>
+  <script src="mobile.js"></script> 
+   <script>
+    
+    var camera, canvas, context, imageData, cw,ch;
+    document.addEventListener('DOMContentLoaded',
+    function(){
+      console.log('camera unmuted');
+      camera = document.getElementById("video");
+      canvas = document.getElementById("canvas");
+      context = canvas.getContext("2d");
+      // var back = document.createElement('canvas');
+      // var backcontext = back.getContext('2d');
+      
+      // var cw = camera.clientWidth;
+      // var ch = canvas.clientHeight;
+
+      cw = canvas.width;
+      ch = canvas.height;
+
+
+      detector = new AR.Detector();
+      draw(camera,context,backcontext,cw,ch);
+
+      // setTimeout(tick, 1);
+      
+    },false);
+
+    function draw(camera,context,cw,ch){
+
+      context.drawImage(camera,0, 0, cw, ch);
+      imageData = context.getImageData(0, 0, cw, ch);
+      console.log(imageData);
+    
+      
+      var markers = detector.detect(imageData);
+      drawCorners(markers,backcontext);
+      drawId(markers,backcontext);
+      drawObject(markers,backcontext);
+
+      // context.putImageData(imageData, 0, 0);
+
+      setTimeout(function{}draw(camera,context,cw,ch),1);
+
+    }
+
+    // function tick(){
+    //   snapshot();
+
+    //   var markers = detector.detect(imageData);
+    //   drawCorners(markers);
+    //   drawId(markers);
+    //   drawObject(markers);
+
+    //   setTimeout(tick, 1);
+    // }
+
+    // function snapshot(){
+    //   // var image = imageData.data,
+    //   //     i = 0, j = 0, curr = 0, len;
+
+    //   // pixels = camera.snapshot().split(",");
+
+    //   // len = pixels.length - 1;
+    //   // while(len --){
+    //   //   curr += parseInt( pixels[j ++], 36);
+
+    //   //   image[i ++] = curr >> 16;
+    //   //   image[i ++] = (curr >> 8) & 0xff;
+    //   //   image[i ++] = curr & 0xff;
+    //   //   image[i ++] = 255;
+    //   // }
+
+    //   context.putImageData(imageData, 0, 0);
+    // }
+          
+    function drawCorners(markers,context){
+      // console.log("drawing corners");
+      var corners, corner, i, j;
+    
+      context.lineWidth = 3;
+
+      for (i = 0; i !== markers.length; ++ i){
+        corners = markers[i].corners;
+        
+        context.strokeStyle = "red";
+        context.beginPath();
+        
+        for (j = 0; j !== corners.length; ++ j){
+          corner = corners[j];
+          context.moveTo(corner.x, corner.y);
+          corner = corners[(j + 1) % corners.length];
+          context.lineTo(corner.x, corner.y);
+        }
+
+        context.stroke();
+        context.closePath();
+        
+        context.strokeStyle = "green";
+        context.strokeRect(corners[0].x - 2, corners[0].y - 2, 4, 4);
+      }
+    }
+
+    function drawId(markers,context){
+      var corners, corner, x, y, i, j;
+      
+      context.strokeStyle = "blue";
+      context.lineWidth = 1;
+      
+      for (i = 0; i !== markers.length; ++ i){
+        corners = markers[i].corners;
+        
+        x = Infinity;
+        y = Infinity;
+        
+        for (j = 0; j !== corners.length; ++ j){
+          corner = corners[j];
+          
+          x = Math.min(x, corner.x);
+          y = Math.min(y, corner.y);
+        }
+
+        context.strokeText(markers[i].id, x, y)
+      }
+    }
+
+    function drawObject(markers,context) {
+      var corners, corner, x, y, i, j,id,img1,img2;
+      
+      img1 = new Image();
+      img2 = new Image();
+      img1.src = 'apple1.png';
+      img2.src = 'apple2.png';
+      
+      for (i = 0; i !== markers.length; ++ i){
+        corners = markers[i].corners;
+        
+        x = Infinity;
+        y = Infinity;
+        
+        for (j = 0; j !== corners.length; ++ j){
+          corner = corners[j];
+          
+          x = Math.min(x, corner.x);
+          y = Math.min(y, corner.y);
+        }
+
+        id = markers[i].id;
+        if (id == 981){
+          img1.onload = function(){
+          context.drawImage(img1, x, y)
+          }
+          
+        }
+        if (id == 1001 ){
+          img2.onload = function(){
+          context.drawImage(img2, x, y)}
+        }
+      }
+
+    }
+
+ </script>
+
+  
+</head>
+
+<body data-gr-c-s-loaded="true" style="font-family: monospace;">
+  
+    <div style="margin: 10px;"><strong>-= Augmented Reality Marker Detector =-</strong></div>
+    <video id="video" autoplay style="display:none;"></video>
+   
+    <canvas id="canvas"style="width:640px; height:480px;"></canvas>
+
+    <!-- <style>
+       
+      #canvas {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -180px 0 0 20px;
+      }
+       
+      #video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -180px 0 0 -500px;
+      }
+    </style> -->
+
+
+</body>
+  
+</html>
