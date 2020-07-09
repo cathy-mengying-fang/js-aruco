@@ -30,6 +30,12 @@
           if (!getUserMedia) {
             return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
           }
+          var constraints = {
+              audio: false,
+              video: {
+                facingMode: 'environment',
+              },
+            };
 
           return new Promise(function(resolve, reject) {
             getUserMedia.call(navigator, constraints, resolve, reject);
