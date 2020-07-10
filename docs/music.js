@@ -1,4 +1,4 @@
-import * as Tone from "/tone";
+import * as Tone from "/tone/build/Tone.js";
 
 
 //attach a click listener to a play button
