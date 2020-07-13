@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/tone"></script>
 
   <script>
-    var video, canvas, context, imageData, detector;
+    var video, canvas, context, imageData, detector, prev_id, id;
   
     function onLoad(){
       video = document.getElementById("video");
@@ -64,6 +64,7 @@
       );
         
       detector = new AR.Detector();
+      prev_id = 0;
 
       requestAnimationFrame(tick);
     }
@@ -75,10 +76,16 @@
         snapshot();
 
         var markers = detector.detect(imageData);
-        drawCorners(markers);
-        drawId(markers);
-        //drawObject(markers);
-        drawSound(markers);
+        for (i = 0; i !== markers.length; ++ i){
+        id = markers[i].id;
+        }
+        if (id != prev_id){
+
+        // drawCorners(markers);
+        // drawId(markers);
+        //drawObject(id);
+        drawSound(id);}
+        prev_id = id;
       }
     }
 
@@ -135,61 +142,36 @@
         context.strokeText(markers[i].id, x, y)
       }
     }
-    function drawObject(markers) {
-      var x, y, i, j,id, prev_id,img1,img2;
+    function drawObject(id) {
+      var img1,img2;
       
       img1 = new Image();
       img2 = new Image();
       img1.src = 'chem1.jpg';
       img2.src = 'chem2.jpg';
             
-      for (i = 0; i !== markers.length; ++ i){
-        id = markers[i].id;
+      if (id == 981){
+        img1.onload = function(){
+        board_context.drawImage(img1,10,10);
+        }
+        
       }
-
-
-      if (prev_id != null){
-        if (id == 981){
-            img1.onload = function(){
-            board_context.drawImage(img1,10,10);
-            }
-            
-          }
-          if (id == 1001){
-            img2.onload = function(){
-            board_context.drawImage(img2,10,10);}
-          }
+      if (id == 1001){
+        img2.onload = function(){
+        board_context.drawImage(img2,10,10);}
       }
-        prev_id = id;
-
     }
     
-    function drawSound(markers) {
-      var x, y, i, j,id, prev_id,synth;
-      for (i = 0; i !== markers.length; ++ i){
-        id = markers[i].id;
-      }
-
-      // sampler = new Tone.Sampler({
-      //   "C3" : "path/to/C3.mp3",
-      //   "A3" : "path/to/A3.mp3",
+    function drawSound(id) {
       synth = new Tone.Synth().toMaster();
-
-        // },function(){
-          // if (prev_id != null && id != prev_id){
-            if (id == 981){
-              console.log("play C4")
-              synth.triggerAttackRelease("C4", "16n");
-            
-            }
-            if (id == 1001){
-              synth.triggerAttackRelease("A4", "16n");
-            }
-        // }
-        // prev_id = id;
-      // })
-             
-
+      if (id == 981){
+        console.log("play C4")
+        synth.triggerAttackRelease("C4", "16n");
+      
+      }
+      if (id == 1001){
+        synth.triggerAttackRelease("A4", "16n");
+      }
     }
 
     window.onload = onLoad;
