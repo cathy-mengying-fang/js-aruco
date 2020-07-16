@@ -28,6 +28,12 @@
       if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
       }
+      const constraints = {
+              audio: false,
+              video: {
+                facingMode: 'environment',
+              },
+            };
       
       if (navigator.mediaDevices.getUserMedia === undefined) {
         navigator.mediaDevices.getUserMedia = function(constraints) {
@@ -36,12 +42,7 @@
           if (!getUserMedia) {
             return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
           }
-          var constraints = {
-              audio: false,
-              video: {
-                facingMode: 'environment',
-              },
-            };
+          
 
           return new Promise(function(resolve, reject) {
             getUserMedia.call(navigator, constraints, resolve, reject);
@@ -164,14 +165,38 @@
     
     function drawSound(id) {
       synth = new Tone.Synth().toMaster();
-      if (id == 981){
-        console.log("play C4")
-        synth.triggerAttackRelease("C4", "16n");
+      // if (id == 981){
+      //   console.log("play C4")
+      //   synth.triggerAttackRelease("C4", "16n");
+      
+      // }
+      // if (id == 1001){
+      //   synth.triggerAttackRelease("A4", "16n");
+      // }
+      if (id == 0){
+        console.log("piano")
+        synth.triggerAttackRelease("C4", "4n");
       
       }
-      if (id == 1001){
-        synth.triggerAttackRelease("A4", "16n");
+      if (id == 1){
+        console.log("snear")
+        synth.triggerAttackRelease("C4", "8n");
       }
+
+      if (id == 2){
+        console.log("guitar")
+        synth.triggerAttackRelease("C4", "8n");
+      }
+      if (id == 3){
+        console.log("4n")
+        synth.triggerAttackRelease("C4", "4n");
+      
+      }
+      if (id == 4){
+        console.log("8n")
+        synth.triggerAttackRelease("C4", "8n");
+      }
+
     }
 
     window.onload = onLoad;
